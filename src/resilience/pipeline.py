@@ -42,9 +42,21 @@ class BuildResult:
     outputs: list[Path]
 
 
+#: Significant digits for floats in CSV output. Full repr (17 digits) exposes
+#: last-ULP differences in numpy's transcendental functions (e.g. ``log1p``)
+#: between platforms, which breaks byte-for-byte reproducibility in CI.
+CSV_FLOAT_FORMAT = "%.12g"
+
+
 def write_csv(df: pd.DataFrame, path: Path, index: bool = False) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(path, index=index, encoding="utf-8", lineterminator="\n")
+    df.to_csv(
+        path,
+        index=index,
+        encoding="utf-8",
+        lineterminator="\n",
+        float_format=CSV_FLOAT_FORMAT,
+    )
     return path
 
 
