@@ -1,0 +1,155 @@
+{
+  "gross_income": {
+    "table": "Income and income structure of household-dwelling units by Information, Year and Region",
+    "url": "https://pxdata.stat.fi/PxWeb/api/v1/en/StatFin/tjt/118w.px",
+    "query": {
+      "query": [
+        {
+          "code": "alue_23_20250101",
+          "selection": {
+            "filter": "all",
+            "values": [
+              "*"
+            ]
+          }
+        },
+        {
+          "code": "timeperiod_y",
+          "selection": {
+            "filter": "all",
+            "values": [
+              "*"
+            ]
+          }
+        },
+        {
+          "code": "contentscode",
+          "selection": {
+            "filter": "item",
+            "values": [
+              "bruttotu"
+            ]
+          }
+        }
+      ],
+      "response": {
+        "format": "json-stat2"
+      }
+    },
+    "publisher_updated": "2025-12-16T06:00:00Z",
+    "fetched_at": "2026-11-05T14:09:51+00:00",
+    "rows": 12600,
+    "source": "Statistics Finland, income distribution statistics"
+  },
+  "population": {
+    "table": "Population by Area, Main type of activity, Sex, Age, Year and Information",
+    "url": "https://pxdata.stat.fi/PxWeb/api/v1/en/StatFin/tyokay/115b.px",
+    "query": {
+      "query": [
+        {
+          "code": "alue_23_20250101",
+          "selection": {
+            "filter": "all",
+            "values": [
+              "*"
+            ]
+          }
+        },
+        {
+          "code": "timeperiod_y",
+          "selection": {
+            "filter": "all",
+            "values": [
+              "*"
+            ]
+          }
+        },
+        {
+          "code": "paaasial_toimin_3_20180101",
+          "selection": {
+            "filter": "item",
+            "values": [
+              "SSS"
+            ]
+          }
+        },
+        {
+          "code": "sukupuoli_9_20180101",
+          "selection": {
+            "filter": "item",
+            "values": [
+              "SSS"
+            ]
+          }
+        },
+        {
+          "code": "ikaryhma_10_20180101",
+          "selection": {
+            "filter": "item",
+            "values": [
+              "SSS"
+            ]
+          }
+        },
+        {
+          "code": "contentscode",
+          "selection": {
+            "filter": "item",
+            "values": [
+              "tyokay-vaesto"
+            ]
+          }
+        }
+      ],
+      "response": {
+        "format": "json-stat2"
+      }
+    },
+    "publisher_updated": "2025-12-17T06:00:00Z",
+    "fetched_at": "2026-11-05T14:09:52+00:00",
+    "rows": 11742,
+    "source": "Statistics Finland, employment"
+  },
+  "unemployment_rate": {
+    "table": "Population by Area, Year and Information",
+    "url": "https://pxdata.stat.fi/PxWeb/api/v1/en/StatFin/tyokay/115x.px",
+    "query": {
+      "query": [
+        {
+          "code": "alue_23_20250101",
+          "selection": {
+            "filter": "all",
+            "values": [
+              "*"
+            ]
+          }
+        },
+        {
+          "code": "timeperiod_y",
+          "selection": {
+            "filter": "all",
+            "values": [
+              "*"
+            ]
+          }
+        },
+        {
+          "code": "contentscode",
+          "selection": {
+            "filter": "item",
+            "values": [
+              "tyokay-tyottomyysaste"
+            ]
+          }
+        }
+      ],
+      "response": {
+        "format": "json-stat2"
+      }
+    },
+    "publisher_updated": "2025-12-17T06:00:00Z",
+    "fetched_at": "2026-11-05T14:09:52+00:00",
+    "rows": 13338,
+    "source": "Statistics Finland, employment"
+  }
+}

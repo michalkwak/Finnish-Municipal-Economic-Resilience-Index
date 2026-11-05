@@ -1,0 +1,35 @@
+{
+  "weights": {
+    "employment": 0.45,
+    "income": 0.35,
+    "population": 0.2
+  },
+  "years": [
+    1995,
+    2024
+  ],
+  "municipalities": 308,
+  "rows": 9227,
+  "dropped_rows": 13,
+  "dropped_by_missing_indicator": {
+    "UnemploymentRate": 13
+  },
+  "name_conflicts": [],
+  "sources": {
+    "gross_income": {
+      "table": "Income and income structure of household-dwelling units by Information, Year and Region",
+      "publisher_updated": "2025-12-16T06:00:00Z",
+      "fetched_at": "2026-11-05T14:09:51+00:00"
+    },
+    "population": {
+      "table": "Population by Area, Main type of activity, Sex, Age, Year and Information",
+      "publisher_updated": "2025-12-17T06:00:00Z",
+      "fetched_at": "2026-11-05T14:09:52+00:00"
+    },
+    "unemployment_rate": {
+      "table": "Population by Area, Year and Information",
+      "publisher_updated": "2025-12-17T06:00:00Z",
+      "fetched_at": "2026-11-05T14:09:52+00:00"
+    }
+  }
+}
