@@ -36,7 +36,9 @@ BLUE_RAMP = LinearSegmentedColormap.from_list(
 HIGHLIGHT = ["Helsinki", "Tampere", "Turku", "Oulu"]
 
 
-def _figure(figsize: tuple[float, float], ncols: int = 1, nrows: int = 1):
+def _figure(
+    figsize: tuple[float, float], ncols: int = 1, nrows: int = 1
+) -> tuple[Figure, np.ndarray]:
     fig = Figure(figsize=figsize, layout="constrained", facecolor=SURFACE)
     axes = fig.subplots(nrows, ncols, squeeze=False)
     for ax in axes.flat:
@@ -304,8 +306,8 @@ def plot_variant_correlation(corr: pd.DataFrame, out_path: Path, year: int) -> P
     fig, axes = _figure((7, 6))
     ax = axes[0, 0]
     ax.grid(False)
-    lo = float(np.floor(corr.to_numpy().min() * 10) / 10)
     values = corr.to_numpy()
+    lo = float(np.floor(values.min() * 10) / 10)
     im = ax.imshow(values, cmap=BLUE_RAMP, vmin=lo, vmax=1)
     ax.set_xticks(range(len(corr)), corr.columns, rotation=30, ha="right")
     ax.set_yticks(range(len(corr)), corr.index)

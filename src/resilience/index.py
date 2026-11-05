@@ -22,13 +22,16 @@ DEMOGRAPHIC_INPUTS: dict[str, tuple[str, bool]] = {
 }
 
 
+def _income_column(spec: IndexSpec) -> str:
+    return "RealGrossIncome" if spec.real_income else "GrossIncome"
+
+
 def required_columns(spec: IndexSpec) -> list[str]:
     """Indicator columns ``compute_index`` needs for this spec."""
-    income = "RealGrossIncome" if spec.real_income else "GrossIncome"
     demographic = DEMOGRAPHIC_INPUTS[spec.demographic][0]
-    if demographic == "LogPopulation":
+    if demographic == "LogPopulation":  # derived from Population inside compute_index
         demographic = "Population"
-    return ["UnemploymentRate", income, demographic]
+    return ["UnemploymentRate", _income_column(spec), demographic]
 
 
 def compute_index(df: pd.DataFrame, spec: IndexSpec | None = None) -> pd.DataFrame:
@@ -46,14 +49,13 @@ def compute_index(df: pd.DataFrame, spec: IndexSpec | None = None) -> pd.DataFra
     if "Population" in out.columns:
         out["LogPopulation"] = np.log1p(out["Population"])
 
-    income_col = "RealGrossIncome" if spec.real_income else "GrossIncome"
     demo_col, demo_higher_better = DEMOGRAPHIC_INPUTS[spec.demographic]
 
     def score(col: str, higher_is_better: bool = True) -> pd.Series:
         return scale(out, col, spec.scaling, spec.scope, higher_is_better)
 
     out["employment_score"] = score("UnemploymentRate", higher_is_better=False)
-    out["income_score"] = score(income_col)
+    out["income_score"] = score(_income_column(spec))
     out["demographic_score"] = score(demo_col, demo_higher_better)
 
     w = spec.weights

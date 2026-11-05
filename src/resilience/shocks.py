@@ -35,7 +35,7 @@ QUADRANTS = {
 }
 
 
-def _relative_change(start: pd.Series | float, end: pd.Series | float):
+def _relative_change(start: pd.Series | float, end: pd.Series | float) -> pd.Series | float:
     return end / start - 1
 
 

@@ -103,7 +103,7 @@ def weight_sensitivity(
     table["ShareTop10Local"] = (local <= 10).mean(axis=1)
     table = table.sort_values("BaseRank").reset_index(drop=True)
 
-    def rank_corr(a, b) -> float:
+    def rank_corr(a: np.ndarray | pd.Series, b: np.ndarray | pd.Series) -> float:
         # Pearson correlation of ranks = Spearman correlation.
         return round(float(np.corrcoef(a, b)[0, 1]), 3)
 

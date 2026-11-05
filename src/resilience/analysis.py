@@ -15,9 +15,10 @@ from resilience.config import (
     FIGURES_DIR,
     RAW_DIR,
     SHOCKS,
+    SMALL_MUNICIPALITY_EMPLOYED,
     TABLES,
     VARIANTS,
-    IndexSpec,
+    Shock,
 )
 from resilience.load import load_indicator
 from resilience.pipeline import build, build_index, default_results_dir, write_csv, write_json
@@ -69,9 +70,23 @@ def compare_variants(
         ranks[col] = ranks[col].rank(method="first").astype(int)
     corr = ranks[rank_cols].corr(method="pearson")  # Pearson on ranks = Spearman
     corr.index = corr.columns = list(indexes)
-    first = rank_cols[0]
     ranks["MaxRankShift"] = ranks[rank_cols].max(axis=1) - ranks[rank_cols].min(axis=1)
-    return ranks.sort_values(first).reset_index(drop=True), corr.round(3)
+    return ranks.sort_values(rank_cols[0]).reset_index(drop=True), corr.round(3)
+
+
+def _shock_record(shock: Shock, shocks: pd.DataFrame) -> dict[str, Any]:
+    """Definition, national employment changes and quadrant counts of one shock."""
+    rows = shocks.loc[shocks["Shock"] == shock.key]
+    return {
+        "key": shock.key,
+        "label": shock.label,
+        "peak": shock.peak,
+        "trough": shock.trough,
+        "recovery_end": shock.recovery_end,
+        "national_change_shock": round(float(rows["NationalChangeShock"].iloc[0]), 4),
+        "national_change_recovery": round(float(rows["NationalChangeRecovery"].iloc[0]), 4),
+        "type_counts": rows["Type"].value_counts().to_dict(),
+    }
 
 
 def run_analysis(
@@ -116,8 +131,7 @@ def run_analysis(
     # 2. Weight sensitivity -----------------------------------------------------------
     sensitivity: dict[str, Any] = {}
     for name in SENSITIVITY_VARIANTS:
-        spec: IndexSpec = VARIANTS[name]
-        res = weight_sensitivity(indexes[name], spec, year, n_draws, seed)
+        res = weight_sensitivity(indexes[name], VARIANTS[name], year, n_draws, seed)
         sensitivity[name] = res.summary
         outputs += [
             write_csv(res.table, analysis_dir / f"weight_sensitivity_{name}_{year}.csv"),
@@ -139,7 +153,8 @@ def run_analysis(
     ]
 
     # 4. Summary ---------------------------------------------------------------------
-    big = summary_by_muni[summary_by_muni["EmployedLatestPeak"] >= 1000]
+    big = summary_by_muni[summary_by_muni["EmployedLatestPeak"] >= SMALL_MUNICIPALITY_EMPLOYED]
+    resistance_cols = ["Municipality", "TimesResistant", "MeanResistance", "MeanRecovery"]
     summary = {
         "year": year,
         "variants": {n: s.description for n, s in VARIANTS.items()},
@@ -148,33 +163,9 @@ def run_analysis(
             ["Municipality", *[c for c in ranks.columns if c.startswith("Rank_")], "MaxRankShift"]
         ].to_dict("records"),
         "weight_sensitivity": sensitivity,
-        "shocks": [
-            {
-                "key": s.key,
-                "label": s.label,
-                "peak": s.peak,
-                "trough": s.trough,
-                "recovery_end": s.recovery_end,
-                "national_change_shock": round(
-                    float(shocks.loc[shocks.Shock == s.key, "NationalChangeShock"].iloc[0]), 4
-                ),
-                "national_change_recovery": round(
-                    float(shocks.loc[shocks.Shock == s.key, "NationalChangeRecovery"].iloc[0]), 4
-                ),
-                "type_counts": shocks.loc[shocks.Shock == s.key, "Type"].value_counts().to_dict(),
-            }
-            for s in SHOCKS
-        ],
-        "most_resistant_across_shocks": big.head(10)[
-            ["Municipality", "TimesResistant", "MeanResistance", "MeanRecovery"]
-        ]
-        .round(3)
-        .to_dict("records"),
-        "least_resistant_across_shocks": big.tail(10)[
-            ["Municipality", "TimesResistant", "MeanResistance", "MeanRecovery"]
-        ]
-        .round(3)
-        .to_dict("records"),
+        "shocks": [_shock_record(s, shocks) for s in SHOCKS],
+        "most_resistant_across_shocks": big.head(10)[resistance_cols].round(3).to_dict("records"),
+        "least_resistant_across_shocks": big.tail(10)[resistance_cols].round(3).to_dict("records"),
     }
     outputs.append(write_json(summary, analysis_dir / "analysis_summary.json"))
     for p in outputs:
