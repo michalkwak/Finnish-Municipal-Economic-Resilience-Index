@@ -1,0 +1,414 @@
+{
+  "year": 2024,
+  "variants": {
+    "baseline": "v1 method: per-year min-max, nominal income, log population.",
+    "real_pooled": "Min-max over all years with CPI-deflated income: scores comparable over time.",
+    "rank": "Per-year percentile ranks: immune to outliers such as Kauniainen.",
+    "dependency": "Economic dependency ratio (non-employed per employed) replaces log population.",
+    "growth": "5-year population growth replaces log population.",
+    "v2": "Proposed: robust z-scores pooled over years, real income, dependency ratio."
+  },
+  "variant_rank_correlation": {
+    "baseline": {
+      "baseline": 1.0,
+      "real_pooled": 0.972,
+      "rank": 0.984,
+      "dependency": 0.973,
+      "growth": 0.971,
+      "v2": 0.97
+    },
+    "real_pooled": {
+      "baseline": 0.972,
+      "real_pooled": 1.0,
+      "rank": 0.955,
+      "dependency": 0.907,
+      "growth": 0.915,
+      "v2": 0.912
+    },
+    "rank": {
+      "baseline": 0.984,
+      "real_pooled": 0.955,
+      "rank": 1.0,
+      "dependency": 0.968,
+      "growth": 0.967,
+      "v2": 0.977
+    },
+    "dependency": {
+      "baseline": 0.973,
+      "real_pooled": 0.907,
+      "rank": 0.968,
+      "dependency": 1.0,
+      "growth": 0.979,
+      "v2": 0.993
+    },
+    "growth": {
+      "baseline": 0.971,
+      "real_pooled": 0.915,
+      "rank": 0.967,
+      "dependency": 0.979,
+      "growth": 1.0,
+      "v2": 0.979
+    },
+    "v2": {
+      "baseline": 0.97,
+      "real_pooled": 0.912,
+      "rank": 0.977,
+      "dependency": 0.993,
+      "growth": 0.979,
+      "v2": 1.0
+    }
+  },
+  "largest_rank_shifts": [
+    {
+      "Municipality": "Kökar",
+      "Rank_baseline": 121,
+      "Rank_real_pooled": 187,
+      "Rank_rank": 102,
+      "Rank_dependency": 52,
+      "Rank_growth": 56,
+      "Rank_v2": 62,
+      "MaxRankShift": 135
+    },
+    {
+      "Municipality": "Luhanka",
+      "Rank_baseline": 234,
+      "Rank_real_pooled": 257,
+      "Rank_rank": 190,
+      "Rank_dependency": 192,
+      "Rank_growth": 122,
+      "Rank_v2": 176,
+      "MaxRankShift": 135
+    },
+    {
+      "Municipality": "Kustavi",
+      "Rank_baseline": 206,
+      "Rank_real_pooled": 241,
+      "Rank_rank": 162,
+      "Rank_dependency": 165,
+      "Rank_growth": 112,
+      "Rank_v2": 141,
+      "MaxRankShift": 129
+    },
+    {
+      "Municipality": "Sottunga",
+      "Rank_baseline": 42,
+      "Rank_real_pooled": 124,
+      "Rank_rank": 54,
+      "Rank_dependency": 18,
+      "Rank_growth": 2,
+      "Rank_v2": 28,
+      "MaxRankShift": 122
+    },
+    {
+      "Municipality": "Kouvola",
+      "Rank_baseline": 190,
+      "Rank_real_pooled": 133,
+      "Rank_rank": 199,
+      "Rank_dependency": 233,
+      "Rank_growth": 248,
+      "Rank_v2": 225,
+      "MaxRankShift": 115
+    },
+    {
+      "Municipality": "Tampere",
+      "Rank_baseline": 124,
+      "Rank_real_pooled": 62,
+      "Rank_rank": 176,
+      "Rank_dependency": 164,
+      "Rank_growth": 125,
+      "Rank_v2": 171,
+      "MaxRankShift": 114
+    },
+    {
+      "Municipality": "Turku",
+      "Rank_baseline": 158,
+      "Rank_real_pooled": 97,
+      "Rank_rank": 210,
+      "Rank_dependency": 194,
+      "Rank_growth": 158,
+      "Rank_v2": 204,
+      "MaxRankShift": 113
+    },
+    {
+      "Municipality": "Taivassalo",
+      "Rank_baseline": 223,
+      "Rank_real_pooled": 244,
+      "Rank_rank": 202,
+      "Rank_dependency": 196,
+      "Rank_growth": 133,
+      "Rank_v2": 183,
+      "MaxRankShift": 111
+    },
+    {
+      "Municipality": "Vårdö",
+      "Rank_baseline": 86,
+      "Rank_real_pooled": 138,
+      "Rank_rank": 70,
+      "Rank_dependency": 28,
+      "Rank_growth": 30,
+      "Rank_v2": 31,
+      "MaxRankShift": 110
+    },
+    {
+      "Municipality": "Pukkila",
+      "Rank_baseline": 201,
+      "Rank_real_pooled": 227,
+      "Rank_rank": 170,
+      "Rank_dependency": 133,
+      "Rank_growth": 184,
+      "Rank_v2": 123,
+      "MaxRankShift": 104
+    }
+  ],
+  "weight_sensitivity": {
+    "baseline": {
+      "variant": "baseline",
+      "year": 2024,
+      "municipalities": 308,
+      "draws": 2000,
+      "seed": 0,
+      "base_weights": {
+        "employment_score": 0.45,
+        "income_score": 0.35,
+        "demographic_score": 0.2
+      },
+      "pca_weights": {
+        "employment_score": 0.476,
+        "income_score": 0.51,
+        "demographic_score": 0.014
+      },
+      "spearman_base_vs_equal": 0.948,
+      "spearman_base_vs_pca": 0.958,
+      "median_spearman_local": 0.993,
+      "median_spearman_global": 0.928,
+      "median_range90_local": 28.0,
+      "median_range90_global": 87.5,
+      "share_range90_global_over_50": 0.75,
+      "robust_top10_local": [
+        "Kauniainen",
+        "Larsmo",
+        "Jomala",
+        "Korsholm",
+        "Pedersöre"
+      ]
+    },
+    "v2": {
+      "variant": "v2",
+      "year": 2024,
+      "municipalities": 308,
+      "draws": 2000,
+      "seed": 0,
+      "base_weights": {
+        "employment_score": 0.45,
+        "income_score": 0.35,
+        "demographic_score": 0.2
+      },
+      "pca_weights": {
+        "employment_score": 0.327,
+        "income_score": 0.28,
+        "demographic_score": 0.393
+      },
+      "spearman_base_vs_equal": 0.994,
+      "spearman_base_vs_pca": 0.991,
+      "median_spearman_local": 0.998,
+      "median_spearman_global": 0.977,
+      "median_range90_local": 15.0,
+      "median_range90_global": 42.0,
+      "share_range90_global_over_50": 0.416,
+      "robust_top10_local": [
+        "Kauniainen",
+        "Jomala",
+        "Brändö",
+        "Lemland",
+        "Larsmo",
+        "Föglö"
+      ]
+    }
+  },
+  "shocks": [
+    {
+      "key": "depression_1990s",
+      "label": "1990s depression",
+      "peak": 1989,
+      "trough": 1993,
+      "recovery_end": 2000,
+      "national_change_shock": -0.209,
+      "national_change_recovery": 0.1868,
+      "type_counts": {
+        "Vulnerable, weak recovery": 150,
+        "Resistant, weak recovery": 97,
+        "Resistant, strong recovery": 53,
+        "Vulnerable, strong recovery": 8
+      }
+    },
+    {
+      "key": "financial_crisis",
+      "label": "2008 financial crisis",
+      "peak": 2008,
+      "trough": 2009,
+      "recovery_end": 2011,
+      "national_change_shock": -0.0367,
+      "national_change_recovery": 0.0281,
+      "type_counts": {
+        "Vulnerable, weak recovery": 97,
+        "Resistant, weak recovery": 94,
+        "Vulnerable, strong recovery": 59,
+        "Resistant, strong recovery": 58
+      }
+    },
+    {
+      "key": "stagnation_2010s",
+      "label": "2010s stagnation",
+      "peak": 2011,
+      "trough": 2015,
+      "recovery_end": 2019,
+      "national_change_shock": -0.0416,
+      "national_change_recovery": 0.0519,
+      "type_counts": {
+        "Vulnerable, weak recovery": 226,
+        "Resistant, weak recovery": 41,
+        "Resistant, strong recovery": 33,
+        "Vulnerable, strong recovery": 8
+      }
+    },
+    {
+      "key": "covid",
+      "label": "COVID-19",
+      "peak": 2019,
+      "trough": 2020,
+      "recovery_end": 2022,
+      "national_change_shock": -0.0374,
+      "national_change_recovery": 0.0608,
+      "type_counts": {
+        "Resistant, weak recovery": 173,
+        "Vulnerable, weak recovery": 82,
+        "Vulnerable, strong recovery": 31,
+        "Resistant, strong recovery": 22
+      }
+    }
+  ],
+  "most_resistant_across_shocks": [
+    {
+      "Municipality": "Jomala",
+      "TimesResistant": 4,
+      "MeanResistance": 1.446,
+      "MeanRecovery": 0.745
+    },
+    {
+      "Municipality": "Lemland",
+      "TimesResistant": 3,
+      "MeanResistance": 1.267,
+      "MeanRecovery": 0.158
+    },
+    {
+      "Municipality": "Kauniainen",
+      "TimesResistant": 4,
+      "MeanResistance": 1.181,
+      "MeanRecovery": -0.268
+    },
+    {
+      "Municipality": "Liminka",
+      "TimesResistant": 4,
+      "MeanResistance": 1.102,
+      "MeanRecovery": 0.517
+    },
+    {
+      "Municipality": "Larsmo",
+      "TimesResistant": 4,
+      "MeanResistance": 0.867,
+      "MeanRecovery": 1.136
+    },
+    {
+      "Municipality": "Kontiolahti",
+      "TimesResistant": 4,
+      "MeanResistance": 0.862,
+      "MeanRecovery": 0.053
+    },
+    {
+      "Municipality": "Sipoo",
+      "TimesResistant": 4,
+      "MeanResistance": 0.842,
+      "MeanRecovery": 0.641
+    },
+    {
+      "Municipality": "Vesilahti",
+      "TimesResistant": 4,
+      "MeanResistance": 0.754,
+      "MeanRecovery": 0.12
+    },
+    {
+      "Municipality": "Kempele",
+      "TimesResistant": 4,
+      "MeanResistance": 0.726,
+      "MeanRecovery": 0.981
+    },
+    {
+      "Municipality": "Pornainen",
+      "TimesResistant": 4,
+      "MeanResistance": 0.638,
+      "MeanRecovery": 0.017
+    }
+  ],
+  "least_resistant_across_shocks": [
+    {
+      "Municipality": "Kitee",
+      "TimesResistant": 1,
+      "MeanResistance": -0.906,
+      "MeanRecovery": -1.443
+    },
+    {
+      "Municipality": "Heinävesi",
+      "TimesResistant": 1,
+      "MeanResistance": -0.911,
+      "MeanRecovery": -1.607
+    },
+    {
+      "Municipality": "Varkaus",
+      "TimesResistant": 0,
+      "MeanResistance": -0.914,
+      "MeanRecovery": -0.669
+    },
+    {
+      "Municipality": "Heinola",
+      "TimesResistant": 0,
+      "MeanResistance": -0.921,
+      "MeanRecovery": -0.901
+    },
+    {
+      "Municipality": "Ilomantsi",
+      "TimesResistant": 0,
+      "MeanResistance": -0.944,
+      "MeanRecovery": -1.515
+    },
+    {
+      "Municipality": "Teuva",
+      "TimesResistant": 0,
+      "MeanResistance": -0.977,
+      "MeanRecovery": -1.221
+    },
+    {
+      "Municipality": "Ikaalinen",
+      "TimesResistant": 1,
+      "MeanResistance": -0.991,
+      "MeanRecovery": -0.466
+    },
+    {
+      "Municipality": "Urjala",
+      "TimesResistant": 0,
+      "MeanResistance": -1.129,
+      "MeanRecovery": -0.481
+    },
+    {
+      "Municipality": "Outokumpu",
+      "TimesResistant": 0,
+      "MeanResistance": -1.246,
+      "MeanRecovery": -0.411
+    },
+    {
+      "Municipality": "Hanko",
+      "TimesResistant": 1,
+      "MeanResistance": -1.306,
+      "MeanRecovery": -0.989
+    }
+  ]
+}

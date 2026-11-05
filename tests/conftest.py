@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -41,6 +42,61 @@ def tiny_raw_dir(tmp_path):
     }
     for key, df in frames.items():
         df.to_csv(tmp_path / TABLES[key].filename, index=False, encoding="utf-8")
+    return tmp_path
+
+
+# National employed persons 1987-2024 (table 115b), used to give the synthetic panel
+# realistic shocks.
+NATIONAL_EMPLOYED = [
+    2319527, 2353195, 2373747, 2332282, 2169147, 2014430, 1877721, 1917051, 1932752, 1957144,
+    2037997, 2132704, 2173885, 2228557, 2235317, 2242303, 2245780, 2262359, 2265211, 2313788,
+    2369066, 2377181, 2289975, 2325679, 2354422, 2339904, 2301751, 2274076, 2256459, 2275679,
+    2327730, 2373668, 2373526, 2284673, 2377126, 2423548, 2417365, 2423433,
+]  # fmt: skip
+PANEL_YEARS = list(range(1987, 2025))
+
+
+@pytest.fixture
+def panel_raw_dir(tmp_path):
+    """Six synthetic municipalities, 1987-2024, every table the pipeline and analysis use."""
+    rng = np.random.default_rng(42)
+    munis = [
+        ("KU091", "Helsinki"),
+        ("KU837", "Tampere"),
+        ("KU853", "Turku"),
+        ("KU564", "Oulu"),
+        ("KU001", "Testby"),
+        ("KU002", "Smallville"),
+    ]
+    shares = np.array([0.30, 0.25, 0.2, 0.15, 0.07, 0.03])
+    nat = np.array(NATIONAL_EMPLOYED, dtype=float)
+    # Each municipality follows the nation with its own sensitivity to swings.
+    beta = np.array([0.6, 1.0, 1.3, 0.9, 1.6, 0.4])
+    swing = nat / nat.mean() - 1
+    employed = shares[:, None] * nat.mean() * (1 + beta[:, None] * swing[None, :])
+    employed *= 1 + rng.normal(0, 0.003, employed.shape)
+    employed[:, :] *= nat / employed.sum(axis=0)  # municipalities sum to the nation
+
+    rows: dict[str, list] = {k: [] for k in TABLES}
+    for i, (code, name) in enumerate(munis):
+        for j, y in enumerate(PANEL_YEARS):
+            pop = employed[i, j] * 2.2 * (1 + 0.004 * (j - 10) * (i - 2))
+            rows["population"].append((code, name, y, round(pop)))
+            rows["employed"].append((code, name, y, round(employed[i, j])))
+            rows["unemployment_rate"].append(
+                (code, name, y, round(8 + 6 * (beta[i] - 1) - 20 * swing[j] + i * 0.3, 1))
+            )
+            rows["dependency_ratio"].append((code, name, y, round(110 + 15 * beta[i] - i, 0)))
+            if y >= 1995:
+                income = 40000 + 6000 * (5 - i) + 1500 * (y - 1995) + rng.normal(0, 300)
+                rows["gross_income"].append((code, name, y, round(income)))
+    for j, y in enumerate(PANEL_YEARS):
+        rows["employed"].append(("SSS", "WHOLE COUNTRY", y, NATIONAL_EMPLOYED[j]))
+        if y >= 1995:
+            rows["cpi"].append(("SSS", "WHOLE COUNTRY", y, round(100 * 1.018 ** (y - 1995), 1)))
+
+    for key, r in rows.items():
+        _raw(key, r).to_csv(tmp_path / TABLES[key].filename, index=False, encoding="utf-8")
     return tmp_path
 
 

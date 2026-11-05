@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterable
 from pathlib import Path
 
 import pandas as pd
 
-from resilience.config import RAW_DIR, TABLES, TableSpec
+from resilience.config import CORE_TABLES, RAW_DIR, TABLES, TableSpec
 from resilience.validate import validate_raw
 
 log = logging.getLogger(__name__)
@@ -35,5 +36,5 @@ def load_indicator(spec: TableSpec, raw_dir: Path = RAW_DIR) -> pd.DataFrame:
     return df
 
 
-def load_all(raw_dir: Path = RAW_DIR) -> dict[str, pd.DataFrame]:
-    return {key: load_indicator(spec, raw_dir) for key, spec in TABLES.items()}
+def load_all(raw_dir: Path = RAW_DIR, keys: Iterable[str] = CORE_TABLES) -> dict[str, pd.DataFrame]:
+    return {key: load_indicator(TABLES[key], raw_dir) for key in keys}

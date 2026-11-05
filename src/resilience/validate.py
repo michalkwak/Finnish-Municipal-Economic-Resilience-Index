@@ -63,7 +63,12 @@ def validate_raw(
 def validate_index(df: pd.DataFrame) -> None:
     """Checks for the final index table."""
     name = "index"
-    score_cols = ["income_score", "pop_score", "employment_score", "EconomicResilienceIndex"]
+    score_cols = [
+        "income_score",
+        "demographic_score",
+        "employment_score",
+        "EconomicResilienceIndex",
+    ]
     require_columns(
         df,
         ["MunicipalityCode", "Municipality", "Year", *score_cols, "EconomicResilienceIndex_100"],

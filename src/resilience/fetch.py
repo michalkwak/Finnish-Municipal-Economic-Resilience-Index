@@ -17,20 +17,19 @@ from typing import Any
 
 import pandas as pd
 
-from resilience.config import RAW_DIR, TABLES, TableSpec
+from resilience.config import NATIONAL_CODE, RAW_DIR, TABLES, TableSpec
 
 log = logging.getLogger(__name__)
 
-USER_AGENT = "finnish-resilience-index/0.2 (python-urllib)"
+USER_AGENT = "finnish-resilience-index/0.3 (python-urllib)"
 TIMEOUT_S = 60
 
 
 def build_query(spec: TableSpec) -> dict[str, Any]:
     """PxWeb v1 query: all areas and years, one value for every other dimension."""
-    query = [
-        {"code": spec.area_dim, "selection": {"filter": "all", "values": ["*"]}},
-        {"code": spec.time_dim, "selection": {"filter": "all", "values": ["*"]}},
-    ]
+    query = [{"code": spec.time_dim, "selection": {"filter": "all", "values": ["*"]}}]
+    if spec.area_dim is not None:
+        query.insert(0, {"code": spec.area_dim, "selection": {"filter": "all", "values": ["*"]}})
     for code, values in spec.selections.items():
         query.append({"code": code, "selection": {"filter": "item", "values": values}})
     return {"query": query, "response": {"format": "json-stat2"}}
@@ -40,19 +39,21 @@ def parse_jsonstat2(payload: dict[str, Any], spec: TableSpec) -> pd.DataFrame:
     """Turn a json-stat2 dataset into ``AreaCode, Area, Year, <value_col>``.
 
     Every dimension other than area and time must have exactly one category,
-    otherwise the table was not reduced to a single indicator.
+    otherwise the table was not reduced to a single indicator. A national-only table
+    (``spec.area_dim is None``) gets AreaCode ``SSS`` / Area ``WHOLE COUNTRY``.
     """
     dim_ids: list[str] = payload["id"]
     sizes: list[int] = payload["size"]
     dims = payload["dimension"]
 
+    free_dims = tuple(d for d in (spec.area_dim, spec.time_dim) if d is not None)
     for dim_id, size in zip(dim_ids, sizes, strict=True):
-        if dim_id not in (spec.area_dim, spec.time_dim) and size != 1:
+        if dim_id not in free_dims and size != 1:
             raise ValueError(
                 f"{spec.key}: dimension {dim_id!r} has {size} categories; "
                 "add it to TableSpec.selections so the table has one value per area-year"
             )
-    for required in (spec.area_dim, spec.time_dim):
+    for required in free_dims:
         if required not in dim_ids:
             raise ValueError(f"{spec.key}: response is missing dimension {required!r}")
 
@@ -70,13 +71,17 @@ def parse_jsonstat2(payload: dict[str, Any], spec: TableSpec) -> pd.DataFrame:
             dense[int(k)] = v
         values = dense
 
-    area_pos, time_pos = dim_ids.index(spec.area_dim), dim_ids.index(spec.time_dim)
-    area_labels = dims[spec.area_dim]["category"].get("label", {})
+    time_pos = dim_ids.index(spec.time_dim)
+    if spec.area_dim is None:
+        area_pos, area_labels = None, {NATIONAL_CODE: "WHOLE COUNTRY"}
+    else:
+        area_pos = dim_ids.index(spec.area_dim)
+        area_labels = dims[spec.area_dim]["category"].get("label", {})
 
     rows = []
     # json-stat2 values are row-major over `id` order, matching itertools.product.
     for combo, value in zip(itertools.product(*codes_per_dim), values, strict=True):
-        area_code = combo[area_pos]
+        area_code = NATIONAL_CODE if area_pos is None else combo[area_pos]
         rows.append(
             {
                 "AreaCode": area_code,

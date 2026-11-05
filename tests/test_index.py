@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from resilience.config import Weights
+from resilience.config import IndexSpec, Weights
 from resilience.index import compute_index, minmax, to_wide
 
 
@@ -34,7 +34,7 @@ class TestMinmax:
 class TestWeights:
     def test_defaults_sum_to_one(self):
         w = Weights()
-        assert w.employment + w.income + w.population == pytest.approx(1.0)
+        assert w.employment + w.income + w.demographic == pytest.approx(1.0)
 
     def test_rejects_bad_sum(self):
         with pytest.raises(ValueError, match="sum to 1"):
@@ -77,7 +77,7 @@ class TestComputeIndex:
         pd.testing.assert_series_equal(a["income_score"], b["income_score"])
 
     def test_weights_are_applied(self):
-        out = compute_index(_merged(), Weights(1.0, 0.0, 0.0))
+        out = compute_index(_merged(), IndexSpec(weights=Weights(1.0, 0.0, 0.0)))
         pd.testing.assert_series_equal(
             out["EconomicResilienceIndex"], out["employment_score"], check_names=False
         )

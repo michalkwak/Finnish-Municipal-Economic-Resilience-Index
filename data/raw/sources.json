@@ -151,5 +151,158 @@
     "fetched_at": "2026-11-05T14:09:52+00:00",
     "rows": 13338,
     "source": "Statistics Finland, employment"
+  },
+  "dependency_ratio": {
+    "table": "Population by Area, Year and Information",
+    "url": "https://pxdata.stat.fi/PxWeb/api/v1/en/StatFin/tyokay/115x.px",
+    "query": {
+      "query": [
+        {
+          "code": "alue_23_20250101",
+          "selection": {
+            "filter": "all",
+            "values": [
+              "*"
+            ]
+          }
+        },
+        {
+          "code": "timeperiod_y",
+          "selection": {
+            "filter": "all",
+            "values": [
+              "*"
+            ]
+          }
+        },
+        {
+          "code": "contentscode",
+          "selection": {
+            "filter": "item",
+            "values": [
+              "taloudellinenhuoltosuhde"
+            ]
+          }
+        }
+      ],
+      "response": {
+        "format": "json-stat2"
+      }
+    },
+    "publisher_updated": "2025-12-17T06:00:00Z",
+    "fetched_at": "2026-11-05T14:55:37+00:00",
+    "rows": 13338,
+    "source": "Statistics Finland, employment"
+  },
+  "employed": {
+    "table": "Population by Area, Main type of activity, Sex, Age, Year and Information",
+    "url": "https://pxdata.stat.fi/PxWeb/api/v1/en/StatFin/tyokay/115b.px",
+    "query": {
+      "query": [
+        {
+          "code": "alue_23_20250101",
+          "selection": {
+            "filter": "all",
+            "values": [
+              "*"
+            ]
+          }
+        },
+        {
+          "code": "timeperiod_y",
+          "selection": {
+            "filter": "all",
+            "values": [
+              "*"
+            ]
+          }
+        },
+        {
+          "code": "paaasial_toimin_3_20180101",
+          "selection": {
+            "filter": "item",
+            "values": [
+              "11"
+            ]
+          }
+        },
+        {
+          "code": "sukupuoli_9_20180101",
+          "selection": {
+            "filter": "item",
+            "values": [
+              "SSS"
+            ]
+          }
+        },
+        {
+          "code": "ikaryhma_10_20180101",
+          "selection": {
+            "filter": "item",
+            "values": [
+              "SSS"
+            ]
+          }
+        },
+        {
+          "code": "contentscode",
+          "selection": {
+            "filter": "item",
+            "values": [
+              "tyokay-vaesto"
+            ]
+          }
+        }
+      ],
+      "response": {
+        "format": "json-stat2"
+      }
+    },
+    "publisher_updated": "2025-12-17T06:00:00Z",
+    "fetched_at": "2026-11-05T14:55:37+00:00",
+    "rows": 11742,
+    "source": "Statistics Finland, employment"
+  },
+  "cpi": {
+    "table": "Consumer Price Indices, overall index by Year, Index series and Information",
+    "url": "https://pxdata.stat.fi/PxWeb/api/v1/en/StatFin/khi/11xt.px",
+    "query": {
+      "query": [
+        {
+          "code": "timeperiod_y",
+          "selection": {
+            "filter": "all",
+            "values": [
+              "*"
+            ]
+          }
+        },
+        {
+          "code": "indeksisarja_1_20160101",
+          "selection": {
+            "filter": "item",
+            "values": [
+              "0_1995"
+            ]
+          }
+        },
+        {
+          "code": "contentscode",
+          "selection": {
+            "filter": "item",
+            "values": [
+              "Pisteluku"
+            ]
+          }
+        }
+      ],
+      "response": {
+        "format": "json-stat2"
+      }
+    },
+    "publisher_updated": "2026-01-14T06:00:00Z",
+    "fetched_at": "2026-11-05T14:55:37+00:00",
+    "rows": 54,
+    "source": "Statistics Finland, consumer price index"
   }
 }

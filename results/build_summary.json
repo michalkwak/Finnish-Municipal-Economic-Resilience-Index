@@ -1,8 +1,16 @@
 {
-  "weights": {
-    "employment": 0.45,
-    "income": 0.35,
-    "population": 0.2
+  "variant": {
+    "name": "v2",
+    "scaling": "robust_z",
+    "scope": "pooled",
+    "demographic": "dependency_ratio",
+    "real_income": true,
+    "weights": {
+      "employment": 0.45,
+      "income": 0.35,
+      "demographic": 0.2
+    },
+    "description": "Proposed: robust z-scores pooled over years, real income, dependency ratio."
   },
   "years": [
     1995,
@@ -15,6 +23,7 @@
     "UnemploymentRate": 13
   },
   "name_conflicts": [],
+  "real_income_base_year": 2024,
   "sources": {
     "gross_income": {
       "table": "Income and income structure of household-dwelling units by Information, Year and Region",
@@ -30,6 +39,21 @@
       "table": "Population by Area, Year and Information",
       "publisher_updated": "2025-12-17T06:00:00Z",
       "fetched_at": "2026-11-05T14:09:52+00:00"
+    },
+    "dependency_ratio": {
+      "table": "Population by Area, Year and Information",
+      "publisher_updated": "2025-12-17T06:00:00Z",
+      "fetched_at": "2026-11-05T14:55:37+00:00"
+    },
+    "employed": {
+      "table": "Population by Area, Main type of activity, Sex, Age, Year and Information",
+      "publisher_updated": "2025-12-17T06:00:00Z",
+      "fetched_at": "2026-11-05T14:55:37+00:00"
+    },
+    "cpi": {
+      "table": "Consumer Price Indices, overall index by Year, Index series and Information",
+      "publisher_updated": "2026-01-14T06:00:00Z",
+      "fetched_at": "2026-11-05T14:55:37+00:00"
     }
   }
 }

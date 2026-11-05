@@ -1,0 +1,59 @@
+{
+  "variant": {
+    "name": "rank",
+    "scaling": "rank",
+    "scope": "year",
+    "demographic": "log_population",
+    "real_income": false,
+    "weights": {
+      "employment": 0.45,
+      "income": 0.35,
+      "demographic": 0.2
+    },
+    "description": "Per-year percentile ranks: immune to outliers such as Kauniainen."
+  },
+  "years": [
+    1995,
+    2024
+  ],
+  "municipalities": 308,
+  "rows": 9227,
+  "dropped_rows": 13,
+  "dropped_by_missing_indicator": {
+    "UnemploymentRate": 13
+  },
+  "name_conflicts": [],
+  "real_income_base_year": null,
+  "sources": {
+    "gross_income": {
+      "table": "Income and income structure of household-dwelling units by Information, Year and Region",
+      "publisher_updated": "2025-12-16T06:00:00Z",
+      "fetched_at": "2026-11-05T14:09:51+00:00"
+    },
+    "population": {
+      "table": "Population by Area, Main type of activity, Sex, Age, Year and Information",
+      "publisher_updated": "2025-12-17T06:00:00Z",
+      "fetched_at": "2026-11-05T14:09:52+00:00"
+    },
+    "unemployment_rate": {
+      "table": "Population by Area, Year and Information",
+      "publisher_updated": "2025-12-17T06:00:00Z",
+      "fetched_at": "2026-11-05T14:09:52+00:00"
+    },
+    "dependency_ratio": {
+      "table": "Population by Area, Year and Information",
+      "publisher_updated": "2025-12-17T06:00:00Z",
+      "fetched_at": "2026-11-05T14:55:37+00:00"
+    },
+    "employed": {
+      "table": "Population by Area, Main type of activity, Sex, Age, Year and Information",
+      "publisher_updated": "2025-12-17T06:00:00Z",
+      "fetched_at": "2026-11-05T14:55:37+00:00"
+    },
+    "cpi": {
+      "table": "Consumer Price Indices, overall index by Year, Index series and Information",
+      "publisher_updated": "2026-01-14T06:00:00Z",
+      "fetched_at": "2026-11-05T14:55:37+00:00"
+    }
+  }
+}

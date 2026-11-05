@@ -49,7 +49,7 @@ def _index(**overrides):
         "Municipality": ["X"],
         "Year": [2024],
         "income_score": [0.5],
-        "pop_score": [0.5],
+        "demographic_score": [0.5],
         "employment_score": [0.5],
         "EconomicResilienceIndex": [0.5],
         "EconomicResilienceIndex_100": [50.0],
@@ -69,4 +69,4 @@ def test_index_rejects_nan_scores():
 
 def test_index_rejects_score_above_one():
     with pytest.raises(DataValidationError, match="outside"):
-        validate_index(_index(pop_score=[1.2]))
+        validate_index(_index(demographic_score=[1.2]))

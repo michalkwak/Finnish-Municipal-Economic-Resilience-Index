@@ -1,44 +1,75 @@
-"""Economic Resilience Index: per-year min-max scaling and a weighted sum."""
+"""Economic Resilience Index: scale three components and take a weighted sum."""
 
 from __future__ import annotations
 
 import numpy as np
 import pandas as pd
 
-from resilience.config import Weights
+from resilience.config import IndexSpec, Weights
+from resilience.features import GROWTH_YEARS
+from resilience.scaling import minmax, scale
+
+__all__ = ["COMPONENT_SCORES", "compute_index", "minmax", "required_columns", "to_wide"]
+
+# Score columns in the same order as Weights.as_tuple().
+COMPONENT_SCORES = ["employment_score", "income_score", "demographic_score"]
+
+# demographic option -> (input column, higher is better)
+DEMOGRAPHIC_INPUTS: dict[str, tuple[str, bool]] = {
+    "log_population": ("LogPopulation", True),
+    "growth_5y": (f"PopGrowth{GROWTH_YEARS}y", True),
+    "dependency_ratio": ("DependencyRatio", False),
+}
 
 
-def minmax(series: pd.Series) -> pd.Series:
-    """Scale to [0, 1]. A constant series maps to 0.5; NaNs stay NaN."""
-    s = pd.to_numeric(series, errors="coerce")
-    lo, hi = s.min(), s.max()
-    if pd.isna(lo) or pd.isna(hi) or hi == lo:
-        return pd.Series(np.where(s.notna(), 0.5, np.nan), index=series.index, dtype=float)
-    return (s - lo) / (hi - lo)
+def required_columns(spec: IndexSpec) -> list[str]:
+    """Indicator columns ``compute_index`` needs for this spec."""
+    income = "RealGrossIncome" if spec.real_income else "GrossIncome"
+    demographic = DEMOGRAPHIC_INPUTS[spec.demographic][0]
+    if demographic == "LogPopulation":
+        demographic = "Population"
+    return ["UnemploymentRate", income, demographic]
 
 
-def compute_index(df: pd.DataFrame, weights: Weights | None = None) -> pd.DataFrame:
-    """Add component scores and the index to a merged indicator table.
+def compute_index(df: pd.DataFrame, spec: IndexSpec | None = None) -> pd.DataFrame:
+    """Add component scores and the index (0-1 and 0-100) to a merged indicator table.
 
-    Every component is min-max scaled within each year, so the index ranks a
-    municipality against the others in the same year (0 = worst, 100 = best).
+    With the default spec every component is min-max scaled within each year, so the
+    index ranks a municipality against the others in the same year (0 = worst, 100 = best).
     """
-    weights = weights or Weights()
+    spec = spec or IndexSpec()
+    missing = [c for c in required_columns(spec) if c not in df.columns]
+    if missing:
+        raise KeyError(f"Variant {spec.name!r} needs columns {missing}")
+
     out = df.copy()
-    out["LogPopulation"] = np.log1p(out["Population"])
-    by_year = out.groupby("Year")
+    if "Population" in out.columns:
+        out["LogPopulation"] = np.log1p(out["Population"])
 
-    out["income_score"] = by_year["GrossIncome"].transform(minmax)
-    out["pop_score"] = by_year["LogPopulation"].transform(minmax)
-    out["employment_score"] = 1 - by_year["UnemploymentRate"].transform(minmax)
+    income_col = "RealGrossIncome" if spec.real_income else "GrossIncome"
+    demo_col, demo_higher_better = DEMOGRAPHIC_INPUTS[spec.demographic]
 
+    def score(col: str, higher_is_better: bool = True) -> pd.Series:
+        return scale(out, col, spec.scaling, spec.scope, higher_is_better)
+
+    out["employment_score"] = score("UnemploymentRate", higher_is_better=False)
+    out["income_score"] = score(income_col)
+    out["demographic_score"] = score(demo_col, demo_higher_better)
+
+    w = spec.weights
     out["EconomicResilienceIndex"] = (
-        weights.employment * out["employment_score"]
-        + weights.income * out["income_score"]
-        + weights.population * out["pop_score"]
+        w.employment * out["employment_score"]
+        + w.income * out["income_score"]
+        + w.demographic * out["demographic_score"]
     )
     out["EconomicResilienceIndex_100"] = (out["EconomicResilienceIndex"] * 100).round(1)
     return out
+
+
+def index_from_scores(scores: np.ndarray, weights: Weights | np.ndarray) -> np.ndarray:
+    """Weighted sum of a (n, 3) score matrix; ``weights`` may be (3,) or (3, k)."""
+    w = np.asarray(weights.as_tuple() if isinstance(weights, Weights) else weights)
+    return scores @ w
 
 
 def to_wide(index_df: pd.DataFrame) -> pd.DataFrame:

@@ -58,6 +58,30 @@ def test_parse_rejects_unreduced_dimension():
         parse_jsonstat2(_payload([1] * 8, contents=("c1", "c2")), SPEC)
 
 
+def test_parse_national_table_without_area_dim():
+    spec = TableSpec(
+        key="cpi",
+        value_col="CPI",
+        table_path="khi/11xt.px",
+        selections={"contentscode": ["p"]},
+        area_dim=None,
+    )
+    payload = {
+        "id": ["timeperiod_y", "contentscode"],
+        "size": [2, 1],
+        "dimension": {
+            "timeperiod_y": {"category": {"index": {"2023": 0, "2024": 1}}},
+            "contentscode": {"category": {"index": {"p": 0}}},
+        },
+        "value": [160.0, 167.7],
+    }
+    df = parse_jsonstat2(payload, spec)
+    assert df["AreaCode"].tolist() == ["SSS", "SSS"]
+    assert df["CPI"].tolist() == [160.0, 167.7]
+    codes = [q["code"] for q in build_query(spec)["query"]]
+    assert codes == ["timeperiod_y", "contentscode"]
+
+
 def test_every_configured_table_fixes_its_extra_dims():
     for spec in TABLES.values():
         assert spec.selections, spec.key
@@ -66,7 +90,12 @@ def test_every_configured_table_fixes_its_extra_dims():
 
 @pytest.mark.network
 @pytest.mark.parametrize("key", list(TABLES))
-def test_live_api_returns_municipalities(key):
-    df, source = fetch_table(TABLES[key])
-    assert df["AreaCode"].str.startswith("KU").sum() > 250
+def test_live_api_returns_expected_areas(key):
+    spec = TABLES[key]
+    df, source = fetch_table(spec)
+    if spec.area_dim is None:
+        assert (df["AreaCode"] == "SSS").all()
+        assert df[spec.value_col].notna().sum() > 25
+    else:
+        assert df["AreaCode"].str.startswith("KU").sum() > 250
     assert source["rows"] == len(df)

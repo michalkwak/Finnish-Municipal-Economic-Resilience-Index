@@ -4,12 +4,13 @@ import pandas as pd
 import pytest
 
 from resilience.cli import main
+from resilience.config import VARIANTS
 from resilience.pipeline import DROPPED_FILE, LONG_FILE, SUMMARY_FILE, WIDE_FILE, build
 
 
 def test_build_on_tiny_data(tiny_raw_dir, tmp_path):
     out_dir = tmp_path / "results"
-    result = build(tiny_raw_dir, out_dir)
+    result = build(tiny_raw_dir, out_dir, VARIANTS["baseline"])
 
     idx = result.index
     # Aggregates (SSS, MK01) excluded; Sottunga dropped for missing unemployment.
@@ -46,7 +47,20 @@ def test_full_pipeline_on_real_data(real_raw_dir, tmp_path):
 
 def test_cli_build_and_plot(tiny_raw_dir, tmp_path, capsys):
     out_dir = tmp_path / "results"
-    assert main(["build", "--raw-dir", str(tiny_raw_dir), "--results-dir", str(out_dir)]) == 0
+    assert (
+        main(
+            [
+                "build",
+                "--variant",
+                "baseline",
+                "--raw-dir",
+                str(tiny_raw_dir),
+                "--results-dir",
+                str(out_dir),
+            ]
+        )
+        == 0
+    )
     png = tmp_path / "fig.png"
     assert (
         main(["plot", "Helsinki", "Tampere", "--results-dir", str(out_dir), "--out", str(png)]) == 0
